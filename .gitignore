@@ -123,3 +123,5 @@ venv.bak/
 # Secrets - ADD YOUR OWN SENSITIVE FILES HERE
 # e.g., config.ini if it contains API keys
 # secrets.json
+
+test.py
