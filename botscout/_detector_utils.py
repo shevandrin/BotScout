@@ -1,6 +1,7 @@
+from selenium.webdriver.remote.webdriver import WebDriver
 
 
-def find_elements_by_computed_style(driver):
+def find_elements_by_computed_style(driver: WebDriver):
     """
     Finds all elements that match specific computed style properties
     common to chatbot widgets (e.g., fixed position, high z-index).
