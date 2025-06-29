@@ -2,6 +2,7 @@
 import requests
 from selenium import webdriver
 from ._launcher_utils import _prepare_url
+from selenium.webdriver.chrome.options import Options
 
 
 def check_ip():
@@ -22,11 +23,15 @@ def check_ip():
         return None
 
 
-def launch_page(url="https://www.google.com/"):
+def launch_page(url="https://www.google.com/", keep_open=True):
     ip = check_ip()
     url = _prepare_url(url)
     print("Launcher ", url, ". Current ip address is ", ip)
-    driver = webdriver.Chrome()
+
+    chrome_options = Options()
+    if keep_open:
+        chrome_options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     return "200"
 
