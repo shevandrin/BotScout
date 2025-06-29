@@ -3,6 +3,7 @@ import requests
 from selenium import webdriver
 from ._launcher_utils import _prepare_url
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 def check_ip():
@@ -41,7 +42,12 @@ def launch_page(url="https://www.google.com/", keep_open=True):
     chrome_options = Options()
     if keep_open:
         chrome_options.add_experimental_option("detach", True)
+
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
+
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
+    )
 
     return driver
