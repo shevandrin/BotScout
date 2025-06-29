@@ -24,6 +24,16 @@ def check_ip():
 
 
 def launch_page(url="https://www.google.com/", keep_open=True):
+    """Launches a Chrome browser to the specified URL.
+
+    Args:
+        url (str): The URL to open.
+        keep_open (bool): If True, the browser window will remain open
+            after the function finishes. Defaults to True.
+
+    Returns:
+        str: Status code (in future version it should return a driver).
+    """
     ip = check_ip()
     url = _prepare_url(url)
     print("Launcher ", url, ". Current ip address is ", ip)
@@ -33,6 +43,6 @@ def launch_page(url="https://www.google.com/", keep_open=True):
         chrome_options.add_experimental_option("detach", True)
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
+
+    # TODO: return a driver
     return "200"
-
-
