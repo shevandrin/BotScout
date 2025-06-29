@@ -1,7 +1,7 @@
 # launcher.py
 import requests
 from selenium import webdriver
-from ._launcher_utils import _prepare_url
+from ._launcher_utils import _prepare_url, _handle_cookie_consent
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -49,5 +49,7 @@ def launch_page(url="https://www.google.com/", keep_open=True):
     WebDriverWait(driver, 10).until(
         lambda d: d.execute_script("return document.readyState") == "complete"
     )
+
+    _handle_cookie_consent(driver)
 
     return driver
