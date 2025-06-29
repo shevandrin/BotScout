@@ -32,7 +32,7 @@ def launch_page(url="https://www.google.com/", keep_open=True):
             after the function finishes. Defaults to True.
 
     Returns:
-        str: Status code (in future version it should return a driver).
+        driver: Selenium Chrome webdriver.
     """
     ip = check_ip()
     url = _prepare_url(url)
@@ -44,5 +44,4 @@ def launch_page(url="https://www.google.com/", keep_open=True):
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
 
-    # TODO: return a driver
-    return "200"
+    return driver
