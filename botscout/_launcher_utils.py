@@ -2,6 +2,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 import time
+from .patterns import COOKIE_PATTERNS
 
 
 def _prepare_url(url: str) -> str:
@@ -30,18 +31,11 @@ def _handle_cookie_consent(driver: WebDriver):
     """
 
     time.sleep(2)
-    # A list of common patterns for "accept" buttons.
-    # We use XPath because it can search for text content, which is very effective.
-    common_button_xpaths = [
-        "//button[contains(text(), 'Accept')]",
-        "//button[contains(text(), 'Allow all')]",
-        "//button[contains(text(), 'Agree')]",
-        "//button[contains(text(), 'I understand')]",
-        "//button[contains(text(), 'Consent')]",
-        "//button[contains(text(), 'Got it')]",
-        "//button[@id='cookie_action_close_header']",  # A common ID
-    ]
-
+    # Forming a list of common patterns for "accept" buttons.
+    text_phrases = COOKIE_PATTERNS.get('button_text_phrases', [])
+    literal_xpaths = COOKIE_PATTERNS.get('literal_xpaths', [])
+    generated_xpaths = [f"//button[contains(text(), '{phrase}')]" for phrase in text_phrases]
+    common_button_xpaths = generated_xpaths + literal_xpaths
     print("Checking for cookie consent banner...")
     for xpath in common_button_xpaths:
         try:
