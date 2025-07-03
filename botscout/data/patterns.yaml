@@ -1,0 +1,20 @@
+detection:
+  cookie_consent:
+    button_text_phrases:
+      - "Accept"
+      - "Allow all"
+      - "Agree"
+      - "I understand"
+      - "Consent"
+      - "Got it"
+    literal_xpaths:
+      - "//button[@id='cookie_action_close_header']"
+  start_phrases:
+    - "How can we help you?"
+    - "Hi! What are you looking for?"
+    - "Curious about how Pluralsight works? Our experts can walk you through it!"
+    - "Shockbyte Support"
+    - "Hi there 👋 How can we help?"
+    - "Hi! Do you need support?"
+    - "Chat with Noty"
+    - "Need help?Click to Chat"
