@@ -34,33 +34,33 @@ def _handle_cookie_consent(driver: WebDriver):
     # Forming a list of common patterns for "accept" buttons.
     text_phrases = COOKIE_PATTERNS.get('button_text_phrases', [])
     literal_xpaths = COOKIE_PATTERNS.get('literal_xpaths', [])
-    generated_xpaths = [f"//button[contains(text(), '{phrase}')]" for phrase in text_phrases]
+    generated_xpaths = [f"//button[contains(., '{phrase}')]" for phrase in text_phrases]
     common_button_xpaths = generated_xpaths + literal_xpaths
     print("Checking for cookie consent banner...")
-    for xpath in common_button_xpaths:
-        try:
-            # Find the button using the current XPath
-            consent_button = driver.find_element(By.XPATH, xpath)
 
-            # If found, try to click it
-            if consent_button.is_displayed() and consent_button.is_enabled():
-                print(f"  - Found consent button with XPath: {xpath}")
-                consent_button.click()
-                print("  - Clicked the consent button.")
+    for xpath in common_button_xpaths:
+        # Find the button using the current XPath
+        consent_buttons = driver.find_elements(By.XPATH, xpath)
+        for button in consent_buttons:
+            try:
+                # If found, try to click it
+                if button.is_displayed() and button.is_enabled():
+                    print(f"  - Found consent button with XPath: {xpath}")
+                    button.click()
+                    print("  - Clicked the consent button.")
+                    time.sleep(1)
+                    return
+            except NoSuchElementException:
+                # This is expected: the button for this XPath doesn't exist.
+                continue
+            except ElementClickInterceptedException:
+                # The button might be temporarily unclickable, try a JS click.
+                print("  - Regular click intercepted, trying JavaScript click.")
+                driver.execute_script("arguments[0].click();", button)
                 time.sleep(1)
                 return
-        except NoSuchElementException:
-            # This is expected: the button for this XPath doesn't exist.
-            continue
-        except ElementClickInterceptedException:
-            # The button might be temporarily unclickable, try a JS click.
-            print("  - Regular click intercepted, trying JavaScript click.")
-            driver.execute_script("arguments[0].click();", consent_button)
-            time.sleep(1)
-            return
-        except Exception as e:
-            # Catch any other unexpected errors
-            print(f"  - An unexpected error occurred: {e}")
-            continue
-
+            except Exception as e:
+                # Catch any other unexpected errors
+                print(f"  - An unexpected error occurred: {e}")
+                continue
     print("  - No cookie consent banner found, or it was already handled.")
