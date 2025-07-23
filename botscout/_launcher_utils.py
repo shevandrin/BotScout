@@ -64,3 +64,55 @@ def _handle_cookie_consent(driver: WebDriver):
                 print(f"  - An unexpected error occurred: {e}")
                 continue
     print("  - No cookie consent banner found, or it was already handled.")
+
+
+def _click_element_from_data(driver: WebDriver, element_data: dict):
+    """
+    Intelligently clicks an element based on the data returned by the JS script.
+    It correctly handles elements inside iframes.
+
+    Args:
+        driver: The active Selenium WebDriver instance.
+        element_data: A dictionary for a single element from the JS result.
+    """
+    element_xpath = element_data.get('xpath')
+    iframe_xpath = element_data.get('iframe_xpath')
+
+    if not element_xpath:
+        print("Error: Element data is missing 'xpath'. Cannot click.")
+        return
+
+    # This is the path that will be executed for your data
+    if iframe_xpath:
+        print(f"Element is inside an iframe. Locating iframe with XPath: {iframe_xpath}")
+        try:
+            # 1. Find the iframe element in the main document.
+            iframe_element = driver.find_element(By.XPATH, iframe_xpath)
+
+            # 2. Switch the driver's context to this iframe.
+            print("Switching context to iframe...")
+            driver.switch_to.frame(iframe_element)
+
+            # 3. Now, inside the iframe, find the target element by ITS xpath.
+            print(f"Finding element inside iframe with XPath: {element_xpath}")
+            target_element = driver.find_element(By.XPATH, element_xpath)
+
+            # 4. Click the element.
+            print("Clicking element.")
+            target_element.click()
+
+        except NoSuchElementException as e:
+            print(f"Error: Could not find element or iframe. Details: {e}")
+        finally:
+            # 5. CRITICAL: Always switch back to the main document context.
+            print("Switching context back to the main document.")
+            driver.switch_to.default_content()
+
+    else:  # This path is for elements not in an iframe
+        print(f"Element is in the main document. Finding with XPath: {element_xpath}")
+        try:
+            target_element = driver.find_element(By.XPATH, element_xpath)
+            print("Clicking element.")
+            target_element.click()
+        except NoSuchElementException as e:
+            print(f"Error: Could not find element in main document. Details: {e}")
